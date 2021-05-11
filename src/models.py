@@ -30,22 +30,6 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
 
-class Favorites(db.Model):
-    __tablename__ = 'favorites'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship(User)
-
-    def __repr__(self):
-        return '<Favorites %r>' % self.user
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,      
-            # do not serialize the password, its a security breach
-        }
-
 class People(db.Model):
     __tablename__ = 'people'
     id = db.Column(db.Integer, primary_key=True)
@@ -55,8 +39,6 @@ class People(db.Model):
     height = db.Column(db.String(250))
     hair_color = db.Column(db.String(250))
     eye_color = db.Column(db.String(250))
-    favorites_id = db.Column(db.Integer, db.ForeignKey('favorites.id'))
-    favorites = db.relationship(Favorites)
 
     def __repr__(self):
         return '<People %r>' % self.name
@@ -80,8 +62,6 @@ class Planets(db.Model):
     climate = db.Column(db.String(250))
     terrain = db.Column(db.String(250))
     population = db.Column(db.String(250))
-    favorites_id = db.Column(db.Integer, db.ForeignKey('favorites.id'))
-    favorites = db.relationship(Favorites)
 
     def __repr__(self):
         return '<Planets %r>' % self.name
@@ -105,8 +85,6 @@ class Starships(db.Model):
     cost = db.Column(db.String(250))
     crew = db.Column(db.String(250))
     cargo_capacity = db.Column(db.String(250))
-    favorites_id = db.Column(db.Integer, db.ForeignKey('favorites.id'))
-    favorites = db.relationship(Favorites)
 
     def __repr__(self):
         return '<Starships %r>' % self.name
@@ -120,5 +98,30 @@ class Starships(db.Model):
             "cost": self.cost,
             "crew": self.crew,
             "cargo_capacity": self.cargo_capacity,     
+            # do not serialize the password, its a security breach
+        }
+
+class Favorites(db.Model):
+    __tablename__ = 'favorites'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    people_id = db.Column(db.Integer, db.ForeignKey('people.id'))
+    planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    starships_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
+    user = db.relationship(User)
+    people = db.relationship(People)
+    planets = db.relationship(Planets)
+    Starships = db.relationship(Starships)
+
+    def __repr__(self):
+        return '<Favorites %r>' % self.user_id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "people_id": self.people_id,
+            "planets_id": self.planets_id,
+            "starships_id": self.starships_id,     
             # do not serialize the password, its a security breach
         }
